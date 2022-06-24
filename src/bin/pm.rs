@@ -7,12 +7,16 @@ enum Commands {
     Remove
 }
 
+enum Flags {
+    Invalid,
+    Yes
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     let command = identify_command(&args);
-    if let Commands::Install = command {
-        println!("install");
-    }
+    let flags = identify_flags(&args);
+    
     println!("{:?}", args);
 }
 
@@ -31,4 +35,18 @@ fn identify_command(args: &Vec<String>) -> Commands {
         }
     }
     Commands::Invalid
+}
+
+fn identify_flags(args: &Vec<String>) -> Vec<Flags> {
+    let mut return_vector: Vec<Flags> = Vec::new();
+
+    for arg in &args[1..] {
+        if &arg[0..1] == "-" {
+            match arg[1..].to_lowercase().as_str() {
+                "y" => return_vector.push(Flags::Yes),
+                _ => return_vector.push(Flags::Invalid)
+            }
+        }
+    }
+    return_vector
 }
