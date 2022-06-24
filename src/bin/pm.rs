@@ -1,5 +1,10 @@
 use std::env;
 
+use libpm::{
+    types,
+    install
+};
+
 enum Commands {
     Invalid,
     Help,
@@ -7,17 +12,15 @@ enum Commands {
     Remove
 }
 
-enum Flags {
-    Invalid,
-    Yes
-}
-
 fn main() {
     let args: Vec<String> = env::args().collect();
     let command = identify_command(&args);
     let flags = identify_flags(&args);
-    
-    println!("{:?}", args);
+
+    if let Commands::Install = command {
+        install::install(flags);
+    }
+
 }
 
 fn identify_command(args: &Vec<String>) -> Commands {
@@ -30,21 +33,21 @@ fn identify_command(args: &Vec<String>) -> Commands {
                 "i" => return Commands::Install,
                 "remove" => return Commands::Remove,
                 "r" => return Commands::Remove,
-                _ => Commands::Invalid
-            };
+                _ => break
+            }
         }
     }
     Commands::Invalid
 }
 
-fn identify_flags(args: &Vec<String>) -> Vec<Flags> {
-    let mut return_vector: Vec<Flags> = Vec::new();
+fn identify_flags(args: &Vec<String>) -> Vec<types::Flags> {
+    let mut return_vector: Vec<types::Flags> = Vec::new();
 
     for arg in &args[1..] {
         if &arg[0..1] == "-" {
             match arg[1..].to_lowercase().as_str() {
-                "y" => return_vector.push(Flags::Yes),
-                _ => return_vector.push(Flags::Invalid)
+                "y" => return_vector.push(types::Flags::Yes),
+                _ => return_vector.push(types::Flags::Invalid)
             }
         }
     }
