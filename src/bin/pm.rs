@@ -18,7 +18,8 @@ fn main() {
     let flags = identify_flags(&args);
 
     if let Commands::Install = command {
-        install::install(flags);
+        let packages = identify_packages(&args);
+        install::install(flags, packages);
     }
 
 }
@@ -51,5 +52,22 @@ fn identify_flags(args: &Vec<String>) -> Vec<types::Flags> {
             }
         }
     }
+    return_vector
+}
+
+fn identify_packages(args: &Vec<String>) -> Vec<String> {
+    let mut return_vector: Vec<String> = Vec::new();
+    let mut command = false;
+
+    for arg in &args[1..] {
+        if &arg[0..1] != "-" {
+            if command {
+                return_vector.push(arg.clone());
+            } else {
+                command = true;
+            }
+        }
+    }
+
     return_vector
 }
